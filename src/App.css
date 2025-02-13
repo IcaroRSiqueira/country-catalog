@@ -2,33 +2,31 @@
   text-align: center;
 }
 
-.App-logo {
+.Loading-icon {
   height: 40vmin;
   pointer-events: none;
 }
 
 @media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 5s linear;
+  .Loading-icon {
+    animation: Loading-icon-spin infinite 2s linear;
   }
 }
 
 .App-header {
-  background-color: #282c34;
+  background-color: #f7f7f7;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+  font-size: calc(6px + 2vmin);
+  color: rgb(0, 0, 0);
+  padding: 25px 75px 75px;
 }
 
-.App-link {
-  color: #61dafb;
-}
 
-@keyframes App-logo-spin {
+@keyframes Loading-icon-spin {
   from {
     transform: rotate(0deg);
   }
