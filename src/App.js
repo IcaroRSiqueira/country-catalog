@@ -1,5 +1,6 @@
 import './App.css';
 import { ApolloClient, InMemoryCache, useQuery, gql, ApolloProvider } from '@apollo/client';
+import { styled } from 'styled-components'
 
 
 function App() {
@@ -7,7 +8,11 @@ function App() {
     <div className="App">
       <header className="App-header">
         <div>
-          <h2>Country Catalog</h2>
+        <Wrapper>
+          <Title>
+            Country Catalog
+          </Title>
+        </Wrapper>
           <br/>
           <ApolloProvider client={client}>
             <DisplayLocations />
@@ -19,6 +24,26 @@ function App() {
 }
 
 export default App;
+
+const Title = styled.h1`
+  font-size: 1.5em;
+  text-align: center;
+  color:rgb(255, 255, 255);
+`;
+
+const CountryList = styled.ul`
+  text-align: left;
+  border-radius: 25px;
+  border: 2px solid rgb(255, 255, 255);
+  padding: 20px;
+  margin: 0px;
+`
+
+const Wrapper = styled.section`
+  padding: 2em;
+  border-radius: 25px;
+  border: 2px solid rgb(255, 255, 255);
+`;
 
 const client = new ApolloClient({
   uri: 'https://countries.trevorblades.com/graphql',
@@ -46,7 +71,7 @@ function DisplayLocations() {
 
   return data.countries.map(({ emoji, name, capital, languages }) => (
     <div>
-      <p>{emoji} {name}, capital: {capital}, languages: {languages.map((language) => language.name).join(', ')}</p>
+      <CountryList>{emoji} {name}, capital: {capital}, languages: {languages.map((language) => language.name).join(', ')}</CountryList>
     </div>
   ));
 }
