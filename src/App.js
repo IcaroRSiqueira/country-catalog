@@ -2,6 +2,7 @@ import './App.css';
 import { ApolloClient, InMemoryCache, useQuery, gql, ApolloProvider } from '@apollo/client';
 import { styled } from 'styled-components'
 import loading_semicircle from './loading-icon.svg';
+import React, { useState } from "react";
 
 
 function App() {
@@ -10,13 +11,9 @@ function App() {
       <header className="App-header">
         <div>
           <Wrapper>
-          <ApolloProvider client={client}>
-            <PageTitle/>
-            <br/>
-              <CountryTable>
-                <DisplayTableHeaders/>
-                <DisplayLocations/>
-              </CountryTable>
+            <ApolloProvider client={client}>
+              <PageTitle/>
+              <DisplayLocations/>
             </ApolloProvider>
           </Wrapper>
         </div>
@@ -56,7 +53,7 @@ const TableRow = styled.tr`
 const TableHeader = styled.th`
   background: rgb(219, 218, 218);
   padding: 0.5%;
-  border-bottom: medium solid black;
+  border-bottom: thin solid black;
 `;
 
 const TableItem = styled.td`
@@ -96,37 +93,64 @@ const GET_LOCATIONS = gql`
   }
 `;
 
-function DisplayTableHeaders() {
-  const { loading, error } = useQuery(GET_LOCATIONS);
-
-  if (loading || error) {
-    return;
-  }
-
-  return <TableRow>
+const DisplayTableHeaders = () => (
+<TableRow>
     <TableHeader>Flag</TableHeader>
     <TableHeader>Name</TableHeader>
     <TableHeader>Capital</TableHeader>
     <TableHeader>Language(s)</TableHeader>
   </TableRow>
-}
+)
+
+const DisplayFilters = ({nameFilter, setNameFilter, capitalFilter, setCapitalFilter, languageFilter, setLanguageFilter}) => (
+  <TableRow>
+      <TableHeader></TableHeader>
+      <TableHeader>
+        <input type="text" value={nameFilter} onChange={(e) => setNameFilter(e.target.value)} placeholder="Search by name"/>
+      </TableHeader>
+      <TableHeader>
+        <input type="text" value={capitalFilter} onChange={(e) => setCapitalFilter(e.target.value)} placeholder="Search by name"/>
+      </TableHeader>
+      <TableHeader>
+        <input type="text" value={languageFilter} onChange={(e) => setLanguageFilter(e.target.value)} placeholder="Search by language"/>
+      </TableHeader>
+  </TableRow>
+)
 
 
 function DisplayLocations() {
-  const { loading, error, data } = useQuery(GET_LOCATIONS);
+  const { loading, error, data } = useQuery(GET_LOCATIONS)
+  const [nameFilter, setNameFilter] = useState('')
+  const [capitalFilter, setCapitalFilter] = useState('')
+  const [languageFilter, setLanguageFilter] = useState('')
 
   if (loading) return LoadingPage();
   if (error) return ErrorPage(error);
 
-  return data.countries.map(({ emoji, name, capital, languages }, index) => (
-    <TableRow even={(index + 1)% 2 === 0}>
-      <TableItem>{emoji}</TableItem>
-      <TableItem>{name}</TableItem>
-      <TableItem>{capital || 'N/A'}</TableItem>
-      <TableItem>{languages.map((language) => language.name).join(', ') || 'N/A'}</TableItem>
-    </TableRow>
-  ));
-}
+  const filteredCountries = data.countries.filter(({name, capital, languages}) => {
+    if (capital === null) { capital = 'N/A' };
+    if (languages.length < 1 ) { languages = [ {name: 'N/A'}] };
+    const matchesName = name.toLowerCase().includes(nameFilter.toLowerCase())
+    const matchesCapital = capital.toLowerCase().includes(capitalFilter.toLowerCase())
+    const matchesLanguage = languages.some((language) => language.name.toLowerCase().includes(languageFilter))
+    return matchesName && matchesCapital && matchesLanguage
+  })
+
+  return <div>
+    <CountryTable>
+    <DisplayFilters nameFilter={nameFilter} setNameFilter={setNameFilter} capitalFilter={capitalFilter} setCapitalFilter={setCapitalFilter} languageFilter={languageFilter} setLanguageFilter={setLanguageFilter}/>
+    <DisplayTableHeaders/>
+      {filteredCountries.map(({ emoji, name, capital, languages }, index) => (
+        <TableRow even={(index + 1)% 2 === 0}>
+          <TableItem>{emoji}</TableItem>
+          <TableItem>{name}</TableItem>
+          <TableItem>{capital || 'N/A'}</TableItem>
+          <TableItem>{languages.map((language) => language.name).join(', ') || 'N/A'}</TableItem>
+        </TableRow>
+      ))}
+    </CountryTable>
+  </div>
+};
 
 function LoadingPage() {
   return <LoadingMessage>
@@ -146,6 +170,5 @@ function PageTitle() {
   if (loading || error) {
     return;
   }
-
   return <Title>Country Catalog</Title>
 }
