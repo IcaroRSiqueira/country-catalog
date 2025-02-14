@@ -37,9 +37,11 @@ const Wrapper = styled.section`
 
 const CountryTable = styled.table`
   overflow: hidden;
-  box-shadow: 0 0 0 1px rgb(219, 218, 218);
   border-radius: 15px;
   border-collapse: collapse;
+  width: 100%;
+  margin-top: 20px;
+  table-layout: fixed;
 `;
 
 const TableRow = styled.tr`
@@ -75,6 +77,13 @@ const ErrorMessage = styled.h3`
     color: red;
 `
 
+const SearchInput = styled.input`
+  width: max;
+  line-height: 28px;
+  border-radius: 10px;
+  text-align:center;
+`
+
 const client = new ApolloClient({
   uri: 'https://countries.trevorblades.com/graphql',
   cache: new InMemoryCache(),
@@ -106,13 +115,13 @@ const DisplayFilters = ({nameFilter, setNameFilter, capitalFilter, setCapitalFil
   <TableRow>
       <TableHeader></TableHeader>
       <TableHeader>
-        <input type="text" value={nameFilter} onChange={(e) => setNameFilter(e.target.value)} placeholder="Search by name"/>
+        <SearchInput type="text" value={nameFilter} onChange={(e) => setNameFilter(e.target.value)} placeholder="Search by name"/>
       </TableHeader>
       <TableHeader>
-        <input type="text" value={capitalFilter} onChange={(e) => setCapitalFilter(e.target.value)} placeholder="Search by name"/>
+        <SearchInput type="text" value={capitalFilter} onChange={(e) => setCapitalFilter(e.target.value)} placeholder="Search by name"/>
       </TableHeader>
       <TableHeader>
-        <input type="text" value={languageFilter} onChange={(e) => setLanguageFilter(e.target.value)} placeholder="Search by language"/>
+        <SearchInput type="text" value={languageFilter} onChange={(e) => setLanguageFilter(e.target.value)} placeholder="Search by language"/>
       </TableHeader>
   </TableRow>
 )
