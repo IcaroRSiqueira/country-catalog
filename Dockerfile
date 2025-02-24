@@ -4,13 +4,11 @@ FROM node:22.12.0
 WORKDIR /src
 
 # Copia o código-fonte da aplicação para o diretório de trabalho
-COPY . .
+COPY package.json .
+COPY package-lock.json .
 
 # Instala as dependências do projeto
-RUN yarn install
-
-# Builda o projeto
-RUN yarn build
+RUN npm install
 
 # Comando para iniciar a aplicação
-CMD ["yarn", "start"]
+CMD ["npm", "start"]
